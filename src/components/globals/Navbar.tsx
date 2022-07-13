@@ -2,17 +2,30 @@
 // ----- Package components -----
 import 'react-js-stickynav/dist/index.css';
 
-// ----- Hamburger-React Icons -----
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import Badge, { BadgeProps } from '@mui/material/Badge';
+import IconButton from '@mui/material/IconButton';
+import { styled } from '@mui/material/styles';
 import { Sling as Hamburger } from 'hamburger-react';
 import React, { useState } from 'react';
 import { StickyNav } from 'react-js-stickynav';
-import Fade from 'react-reveal/Fade';
 import { Link, NavLink } from 'react-router-dom';
 
-// ----- datas -----
 import navlinks from '../../../data/navLinks';
-// ----- Component -----
 import Dropdown from './Dropdown';
+
+// ---------------Cart icon style config ----------------------------
+
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -4,
+    top: 11,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 3px',
+  },
+}));
+
+// ----------------------------------------------------------------
 
 const Navbar = () => {
   // ! STATES :
@@ -74,6 +87,13 @@ const Navbar = () => {
                   <li className="navbar__li">{rightTitle}</li>
                 </NavLink>
               ))}
+              <Link to="/panier" onClick={closeMenu}>
+                <IconButton aria-label="cart">
+                  <StyledBadge badgeContent={1} color="secondary">
+                    <ShoppingCartIcon />
+                  </StyledBadge>
+                </IconButton>
+              </Link>
             </div>
           </ul>
 

@@ -9,6 +9,7 @@
   width: 100%;
   align-items: flex-start;
   padding: 3rem 3rem;
+  
   @media screen and (min-width: 300px) and (max-width: 1020px) {
     flex-wrap: wrap;
     display: flex;
@@ -17,8 +18,11 @@
   }
 
   ul {
+
     margin: 0 auto;
     list-style-type: none;
+    gap: 3rem;
+    
   }
   li {
     @media screen and (min-width: 300px) and (max-width: 1020px) {
@@ -28,6 +32,8 @@
       text-decoration: none;
       color: #333;
       vertical-align: 3em;
+   
     }
   }
 }
+
