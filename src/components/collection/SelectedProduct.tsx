@@ -1,42 +1,79 @@
 import 'react-toastify/dist/ReactToastify.css';
 
-import { dialogContentTextClasses } from '@mui/material';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-// import de toastify
-import { Id, toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
-import addItem from '../../Context/ShoppingCartContext';
 import ShoppingCartContext from '../../Context/ShoppingCartContext';
 import IProduct from '../../interfaces/IProduct';
 import GoToTop from '../globals/GoToTop';
 
-// ----------------------------------------------------------------
+// -----------------------------------------------------------
 
 const SelectedProduct = () => {
+  // >> USE PARAMS
   const { id } = useParams();
+
+  // >> STATES
   const [oneProduct, setOneProduct] = useState<IProduct>();
+  const [color, setColor] = useState('firstPage');
+  const [selectedItem, setSelectedItem] = useState<number | null>(null);
+
+  // >> FUNCTIONS
+
+  // id: 11;
+  // productDesc: 'Sac en pépin de pomme';
+  // productName: 'CANCUN';
+  // productPrice: 175;
+  // productRef: 'e11';
+  // productStock: 2;
+
+  const notify = () => {
+    if (selectedItem === null) {
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />;
+
+      toast.success(`Article ajouté au panier !!`, {
+        position: 'top-center',
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+
+  // >> AXIOS
 
   useEffect(() => {
     const getOneProduct = async () => {
-      // indispensable quand on veut utiliser async/await dans un useEffect
       let url: string = `${import.meta.env.VITE_API_URL}/api/products/${id}`;
 
       const { data } = await axios.get<IProduct>(url, {
         withCredentials: true,
       });
       setOneProduct(data);
-      console.log(data);
+      setSelectedItem(data.id);
+      // console.log(data);
     };
     getOneProduct();
   }, [id]);
 
-  const [color, setColor] = useState('firstPage');
-  //ajouter la notif avec le message souhaité
-  const notify = () => toast('Produit ajouté au panier!');
-
-  const { addItem, cartItems } = useContext(ShoppingCartContext);
+  // >> VARIABLES
+  // Recover the IncreaseCartQuantity function from the context
+  const { increaseCartQuantity } = useContext(ShoppingCartContext);
 
   return (
     <div className="Page">
@@ -76,21 +113,20 @@ const SelectedProduct = () => {
                     />
                   </div>
                 </div>
-                <GoToTop />
                 <div className="Page__secondPage__description__buttonCartContainer">
                   <button
-                    onClick={() => addItem(Number(id || '0'))}
+                    onClick={() => increaseCartQuantity(Number(id || '0'))}
                     type="button"
                     className="Page__secondPage__description__buttonCartContainer__buttonCart">
                     AJOUTER
                   </button>
                 </div>
-                <ToastContainer />
               </div>
             </div>
           </div>
         </>
       )}
+      <GoToTop />
     </div>
   );
 };

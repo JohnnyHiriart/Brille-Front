@@ -2,12 +2,16 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
-import axios from 'axios';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import React, { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 
 import { storage } from '../../utils/firebase';
+
+// ---------------- @mui/material switch button setting ---------------
+const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 // ----------------------------------------------------------------
 
@@ -58,7 +62,6 @@ const UserProfile = () => {
   // ---- to handle the image changement
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement> | any) => {
     let files = e.target.files[0];
-    console.log(files);
     files && setImage(files);
   };
 
@@ -134,6 +137,70 @@ const UserProfile = () => {
     setCity(e.target.value);
   };
 
+  // ------ Toastify packages config ------
+  const notifyInfos = () => {
+    if (firstName !== '' && lastName !== '' && email !== '') {
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />;
+
+      toast.success('Votre compte a bien été actualisé', {
+        position: 'top-center',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+
+  const notifyPassword = () => {
+    if (
+      oldPassword !== '' &&
+      newPassword !== '' &&
+      confirmedPassword === newPassword &&
+      oldPassword !== newPassword
+    ) {
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />;
+
+      toast.success('Veuillez vérifier votre boite mail', {
+        position: 'top-center',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmedPassword('');
+    }
+  };
+
+  // --------------------------------------------
+
   // ---------generates the color based on the name of the person
   // function stringToColor(string: string) {
   //   let hash = 0;
@@ -167,6 +234,7 @@ const UserProfile = () => {
 
   return (
     <div className="userProfile">
+      {/* ------ AVATAR ------- */}
       <div className="userProfile__avatarContainer">
         <Avatar src={url} sx={{ width: 125, height: 125 }}>
           <p className="userProfile__avatarContainer__initials">JB</p>
@@ -196,6 +264,8 @@ const UserProfile = () => {
           </Button>
         )}
       </div>
+
+      {/* ------ FORM LEFT SIDE ------- */}
       <div className="userProfile__settings">
         <h4>Paramètres du compte</h4>
 
@@ -300,20 +370,38 @@ const UserProfile = () => {
                   </FormControl>
                 </div>
 
-                {/* ----- ZIPCODE AND COUNTRY INPUT ----- */}
-                <div className="userProfile__settings__container__leftSide__zip">
-                  <FormControl sx={{ m: 1, width: '50ch' }} variant="standard">
-                    <TextField
-                      id="outlined-basic"
-                      value={zipCode}
-                      onChange={handleZipCode}
-                      label="Code postal"
-                      type="number"
-                      variant="standard"
-                      size="small"
-                    />
-                  </FormControl>
+                {/* ----- ZIPCODE AND CITY INPUT ----- */}
+                <div className="userProfile__settings__container__leftSide__zipAndCity">
+                  <div className="userProfile__settings__container__leftSide__zip">
+                    <FormControl sx={{ m: 1, width: '20ch' }} variant="standard">
+                      <TextField
+                        id="outlined-basic"
+                        value={zipCode}
+                        onChange={handleZipCode}
+                        label="Code postal"
+                        type="number"
+                        variant="standard"
+                        size="small"
+                      />
+                    </FormControl>
+                  </div>
+
+                  <div className="userProfile__settings__container__leftSide__city">
+                    <FormControl sx={{ m: 1, width: '20ch' }} variant="standard">
+                      <TextField
+                        id="outlined-basic"
+                        value={city}
+                        onChange={handleCity}
+                        label="Ville"
+                        type="text"
+                        variant="standard"
+                        size="small"
+                      />
+                    </FormControl>
+                  </div>
                 </div>
+
+                {/* ------ FORM LEFT SIDE BUTTON------- */}
                 <div className="userProfile__settings__container__leftSide">
                   <Button
                     variant="contained"
@@ -322,12 +410,12 @@ const UserProfile = () => {
                     size="small"
                     onClick={handleSubmit}>
                     Modifier
-                    <input type="file" hidden onChange={handleImageChange} />
                   </Button>
                 </div>
               </div>
             </div>
 
+            {/* ------ FORM RIGHT SIDE ------- */}
             <div className="userProfile__settings__container__rightSide">
               <p>Changer mon mot de passe</p>
               {/* ----- OLD PASSWORD INPUT ----- */}
@@ -365,7 +453,6 @@ const UserProfile = () => {
               </div>
 
               {/* ----- CONFIRMED PASSWORD INPUT ----- */}
-
               <div className="userProfile__settings__container__rightSide">
                 <FormControl sx={{ m: 1, width: '50ch' }} variant="standard">
                   <TextField
@@ -382,32 +469,32 @@ const UserProfile = () => {
                 </FormControl>
               </div>
 
-              {/* ----- OLD PASSWORD INPUT ----- */}
-              <div className="userProfile__settings__container__rightSide__oldpassword">
-                <FormControl sx={{ m: 1, width: '50ch' }} variant="standard">
-                  <TextField
-                    id="standard-password-input"
-                    value={oldPassword}
-                    label="Ancien mot de passe"
-                    type="password"
-                    onChange={handleOldPassword}
-                    autoComplete="current-password"
-                    variant="standard"
-                    size="small"
-                    required
-                  />
-                </FormControl>
-              </div>
-              <div className="userProfile__settings__container__rightSide">
+              {/* ------ FORM RIGHT SIDE BUTTON ------- */}
+              <div className="userProfile__settings__container__rightSide__button">
                 <Button
                   variant="contained"
                   component="label"
                   color="secondary"
                   size="small"
-                  onClick={handleSubmit}>
-                  Confirmer
-                  <input type="file" hidden onChange={handleImageChange} />
+                  onClick={notifyPassword}>
+                  {oldPassword !== '' &&
+                  newPassword !== '' &&
+                  confirmedPassword === newPassword ? (
+                    <p>Confirmer</p>
+                  ) : (
+                    <p>Changer mon mot de passe</p>
+                  )}
                 </Button>
+              </div>
+
+              {/* ------ FORM RIGHT SIDE SWITCH BUTTONS------- */}
+              <div className="userProfile__settings__container__rightSide__switch">
+                <p>Notifications SMS</p>
+                <Switch {...label} color="secondary" />
+              </div>
+              <div className="userProfile__settings__container__rightSide__switch">
+                <p>Notifications Email</p>
+                <Switch {...label} color="secondary" />
               </div>
             </div>
           </div>

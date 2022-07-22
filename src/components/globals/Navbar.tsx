@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */
-// ----- Package components -----
 import 'react-js-stickynav/dist/index.css';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -13,7 +12,6 @@ import { Link, NavLink } from 'react-router-dom';
 
 import navlinks from '../../../data/navLinks';
 import ShoppingCartContext from '../../Context/ShoppingCartContext';
-import Dropdown from './Dropdown';
 
 // ---------------Cart icon style config ----------------------------
 
@@ -29,24 +27,36 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
 // ----------------------------------------------------------------
 
 const Navbar = () => {
-  // ! STATES :
-  // Manage the hamburger menu
-  const [isOpened, setIsOpened] = useState(false);
-  //Manage navbar background-color
-  const [color, setColor] = useState(false);
+  // >> STATES
 
-  // ! FUNCTIONS :
-  // Manage the hamburger menu
+  // ? For  the hamburger menu
+  const [isOpened, setIsOpened] = useState<boolean>(false);
+
+  // ? For the navbar background-color on scroll
+  const [isColor, setIsColor] = useState<boolean>(false);
+
+  // >> FUNCTIONS
+
+  // ? Manage the hamburger menu
   const closeMenu = () => {
     setIsOpened(false);
   };
-  //Change navbar background-color when scrolling
+
+  // ? Change the navbar background-color when scrolling
   const changeColor = () => {
-    window.scrollY >= 20 ? setColor(true) : setColor(false);
+    if (isOpened === false && window.scrollY >= 15) {
+      setIsColor(true);
+    } else {
+      setIsColor(false);
+    }
   };
 
+  // ? To listen the navbar scrolling event
   window.addEventListener('scroll', changeColor);
 
+  // >> VARIABLES
+
+  // ? To use the cartItems function from the ShoppingCartContext file
   const { cartItems } = useContext(ShoppingCartContext);
 
   return (
@@ -54,7 +64,7 @@ const Navbar = () => {
       <StickyNav>
         <nav className="navbar">
           {/* ---- NAVBAR ---- */}
-          <ul className={color ? 'navbar__ul__headerColor' : 'navbar__ul'}>
+          <ul className={isColor ? 'navbar__ul__headerColor' : 'navbar__ul'}>
             {/* >> Nav: Left Side*/}
             <div className="navbar__ul__container">
               {/* Dropdown menu feature not confirmed yet */}
