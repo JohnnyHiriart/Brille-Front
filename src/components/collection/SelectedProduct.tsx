@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import { Bounce, Flip, Slide, toast, ToastContainer, Zoom } from 'react-toastify';
 
 import ShoppingCartContext from '../../Context/ShoppingCartContext';
 import IProduct from '../../interfaces/IProduct';
@@ -19,40 +19,35 @@ const SelectedProduct = () => {
   const [oneProduct, setOneProduct] = useState<IProduct>();
   const [color, setColor] = useState('firstPage');
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const [add, setAdd] = useState<string>('Ajouter');
 
   // >> FUNCTIONS
 
-  // id: 11;
-  // productDesc: 'Sac en pépin de pomme';
-  // productName: 'CANCUN';
-  // productPrice: 175;
-  // productRef: 'e11';
-  // productStock: 2;
-
   const notify = () => {
-    if (selectedItem === null) {
-      <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />;
+    <ToastContainer
+      position="top-center"
+      autoClose={5000}
+      transition={Slide}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />;
 
-      toast.success(`Article ajouté au panier !!`, {
-        position: 'top-center',
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
+    toast.success(`Article ajouté au panier !!`, {
+      position: 'top-center',
+      autoClose: 5000,
+      transition: Slide,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+    setAdd('Excellent choix !');
   };
 
   // >> AXIOS
@@ -66,7 +61,6 @@ const SelectedProduct = () => {
       });
       setOneProduct(data);
       setSelectedItem(data.id);
-      // console.log(data);
     };
     getOneProduct();
   }, [id]);
@@ -114,12 +108,24 @@ const SelectedProduct = () => {
                   </div>
                 </div>
                 <div className="Page__secondPage__description__buttonCartContainer">
-                  <button
-                    onClick={() => increaseCartQuantity(Number(id || '0'))}
-                    type="button"
-                    className="Page__secondPage__description__buttonCartContainer__buttonCart">
-                    AJOUTER
-                  </button>
+                  <div onClick={notify}>
+                    {parseFloat(oneProduct.productStock) >= 1 ? (
+                      <button
+                        onClick={() => increaseCartQuantity(Number(id || '0'))}
+                        type="button"
+                        className="Page__secondPage__description__buttonCartContainer__buttonCart">
+                        {add}
+                      </button>
+                    ) : (
+                      <button
+                        disabled
+                        onClick={() => increaseCartQuantity(Number(id || '0'))}
+                        type="button"
+                        className="Page__secondPage__description__buttonCartContainer__buttonCart">
+                        Victime de son succès
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

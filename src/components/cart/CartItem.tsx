@@ -1,46 +1,34 @@
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PaymentsIcon from '@mui/icons-material/Payments';
 import RemoveIcon from '@mui/icons-material/Remove';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import Button from '@mui/material/Button';
 import Fab from '@mui/material/Fab';
 import Paper from '@mui/material/Paper';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import ShoppingCartContext from '../../Context/ShoppingCartContext';
 import IProduct from '../../interfaces/IProduct';
+// import { toast, ToastContainer } from 'react-toastify';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 const CartItem = () => {
   // >> STATES
 
-  // const [selectedItem, setSelectedItem] = useState<IProduct>();
   const [products, setProducts] = useState<IProduct[]>([]);
-
-  // >> USE PARAMS
-  // const { id } = useParams();
 
   // >> ALL THE "SHOPPINGCARTCONTEXT" FUNCTIONS
 
   const { cartItems, removeFromCart, increaseCartQuantity, decreaseCartQuantity } =
     useContext(ShoppingCartContext);
 
-  // const increaseQuantity = () => {
-  //   setQuantity((prevNum) => prevNum + 1);
-  // };
-
-  // const decreaseQuantity = () => {
-  //   setQuantity((prevNum) => prevNum - 1);
-  //   quantity === 1 && setQuantity(1);
-  // };
-
   // >> VARIABLES
-  // from the shoppingcartcontext to get the items
-  const shippingPrice = 2.99;
-  const doubleShipping = shippingPrice * 2;
-  // const bagStock = 12 - quantity + 1;
-  // const subTotal = bagPrice * quantity;
-  // const Total = quantity < 3 ? subTotal + shippingPrice : subTotal + doubleShipping;
+
+  // ? from the shoppingcartcontext to get the items
+  const shippingPrice = 4.99;
 
   // >> AXIOS
 
@@ -57,34 +45,18 @@ const CartItem = () => {
     getAllProducts();
   }, []);
 
-  console.log(products);
   return (
     <div className="cartItem">
       {products.length && (
         <>
           {cartItems.length > 0 ? (
             <>
-              {/* Pour chaque cartItem de mon cartItems, je veux afficher : MAP ICI */}
-
               {/* ----- CARD ITEM ----- */}
               <div className="cartItem__wrapper">
-                {/* {products &&
-                  products.map(
-                    ({
-                      id,
-                      productName,
-                      productDesc,
-                      productImage,
-                      productPrice,
-                      productStock,
-                    }) => ( */}
-                {cartItems.map((cartItem) => (
+                {cartItems.map((cartItem, id) => (
                   <>
-                    <Paper elevation={3}>
+                    <Paper elevation={4} key={id} className="cartItem__paper">
                       <div className="cartItem__productInfos">
-                        {/* Je veux récupèrer le produit et ses infos correspondant à mon cartItem.id */}
-                        {/* products.find(where mon id produit est égal à mon id de cartiteù).productImage */}
-
                         <img
                           src={
                             products.find((product) => product.id === cartItem.id)
@@ -107,22 +79,27 @@ const CartItem = () => {
                             }
                           </p>
                           <p>
-                            {
+                            {formatCurrency(
                               products.find((product) => product.id === cartItem.id)
-                                ?.productPrice
-                            }{' '}
-                            €
+                                ?.productPrice,
+                            )}{' '}
                           </p>
-                          <p>
-                            Stock:
-                            {
-                              products.find((product) => product.id === cartItem.id)
-                                ?.productStock
-                            }
-                          </p>
+
+                          {parseFloat(
+                            products.find((product) => product.id === cartItem.id)
+                              ?.productStock!,
+                          ) <= 5 && (
+                            <p>
+                              Articles disponibles: {''}
+                              {
+                                products.find((product) => product.id === cartItem.id)
+                                  ?.productStock
+                              }
+                            </p>
+                          )}
                         </div>
 
-                        {/* Increase & Decrease quantity buttons */}
+                        {/* --- Increase & Decrease items quantity buttons --- */}
                         <div className="cartItem__productInfos__icons">
                           <Fab
                             size="small"
@@ -148,34 +125,60 @@ const CartItem = () => {
                         </i>
                       </div>
                     </Paper>
-                    <hr />
                   </>
                 ))}
               </div>
 
               {/* ----- ALL THE PRICES ----- */}
               <div className="cartItem__productInfos__amountInfos">
-                <p>Sous-total</p>
-                {/* <p>{subTotal} €</p> */}
+                <p>Sous-Total:</p>
+                <p>
+                  {formatCurrency(
+                    cartItems.reduce((total, cartItem) => {
+                      const item = products.find((product) => product.id === cartItem.id);
+                      return total + (item?.productPrice || 0) * cartItem.quantity;
+                    }, 0),
+                  )}
+                </p>
               </div>
 
               <div className="cartItem__productInfos__amountInfos">
                 <p>Frais de Livraison</p>
-                <p>{cartItems[0].quantity >= 3 ? doubleShipping : shippingPrice} €</p>
+                <p> {formatCurrency(shippingPrice)}</p>
               </div>
-
               <div className="cartItem__productInfos__amountInfos">
                 <p>TOTAL</p>
-                {/* <p>{Total}€</p> */}
+                <p>
+                  {formatCurrency(
+                    cartItems.reduce((total, cartItem) => {
+                      const item = products.find((product) => product.id === cartItem.id);
+                      return (
+                        total +
+                        ((item?.productPrice || 0) * cartItem.quantity + shippingPrice)
+                      );
+                    }, 0),
+                  )}
+                </p>
+              </div>
+              <div>
+                {/* ---- Call to action buttons ---- */}
+                <div className="cartItem__wrapper__secondPart__secondWrapper">
+                  <Link to="/collection">
+                    <button type="button">CONTINUER MES ACHATS</button>
+                  </Link>
+                  <Link to="/">
+                    <button type="button">PAIEMENT</button>
+                  </Link>
+                </div>
               </div>
             </>
           ) : (
             <div className="cartItem__productInfos__emptyCart">
               <h4>Votre panier est actuellement vide.</h4>
               <Link to="/collection">
-                <Button variant="outlined" sx={{ width: 300, padding: 1, margin: 2 }}>
+                <button type="button" className="button-51">
                   Continuer mes achats
-                </Button>
+                </button>
               </Link>
             </div>
           )}

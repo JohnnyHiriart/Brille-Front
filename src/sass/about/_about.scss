@@ -16,7 +16,7 @@
   }
   h4 {
     text-align: center;
-    cursor: pointer;
+
     @media screen and (min-width: 320px) and (max-width: 425px) {
       font-size: 12px;
     }
@@ -37,7 +37,6 @@
       &:hover &__paragraph {
         transition: ease-in-out 3s;
         opacity: 1;
-        cursor: pointer;
       }
       &:hover &__title {
         visibility: hidden;
@@ -55,6 +54,12 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        @media screen and (min-width: 320px) and (max-width: 1026px) {
+          font-size: 6px;
+          text-align: justify;
+          margin-left: 1rem;
+          margin-right: 1rem;
+        }
       }
 
       &__title {
@@ -75,6 +80,6 @@
 }
 #aboutImg {
   width: 50%;
-  @media screen and (min-width: 320px) and (max-width: 425px) {
+  @media screen and (min-width: 320px) and (max-width: 500px) {
   }
 }

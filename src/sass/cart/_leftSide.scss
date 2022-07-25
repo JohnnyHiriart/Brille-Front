@@ -2,21 +2,102 @@
   display: flex;
   min-width: 50%;
   height: 100%;
+  justify-content: center;
+  align-items: center;
   padding-left: 5rem;
   padding-bottom: 2rem;
-  background: linear-gradient(#d9e1f9, #e5e9f6);
+  background-color: #9eb0cfd4;
+  background-size: cover;
+
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  @media screen and (min-width: 320px) and (max-width: 1026px) {
+    display: none;
+  }
 
   &__wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+    margin: auto;
     &__title {
-      margin-left: 5px;
+      font-family: 'Josefin Sans', sans-serif;
       color: #000000;
-      font-size: 14px;
+      font-size: 23px;
+    }
+    &__button {
+      width: 100%;
+      margin: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .btn-one {
+        background-color: transparent;
+        border: 1px solid #8b98b0d4;
+        box-sizing: border-box;
+        color: #00132c;
+        font-family: 'Josefin Sans', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 24px;
+        padding: 16px;
+        position: relative;
+        text-decoration: none;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        margin-top: 2rem;
+        &:hover {
+          color: white;
+        }
+        p {
+          font-family: 'Josefin Sans', sans-serif;
+          font-size: 30px;
+          padding: 15px;
+        }
+      }
+      .btn-one span {
+        transition: all 0.3s;
+      }
+      .btn-one::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        opacity: 0;
+        transition: all 0.3s;
+        border-top-width: 1px;
+        border-bottom-width: 1px;
+        border-top-style: solid;
+        border-bottom-style: solid;
+        border-top-color: #edddd0;
+        border-bottom-color: #edddd0;
+        transform: scale(0.1, 1);
+      }
+      .btn-one:hover span {
+        letter-spacing: 2px;
+      }
+      .btn-one:hover::before {
+        opacity: 1;
+        transform: scale(1, 1);
+      }
+      .btn-one::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        transition: all 0.3s;
+        background-color: rgba(149, 137, 182, 0.1);
+      }
+      .btn-one:hover::after {
+        opacity: 0;
+        transform: scale(0.1, 1);
+      }
     }
     &__textContainer {
       display: flex;
