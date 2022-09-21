@@ -10,8 +10,8 @@ import React, { useContext, useState } from 'react';
 import { StickyNav } from 'react-js-stickynav';
 import { Link, NavLink } from 'react-router-dom';
 
-import navlinks from '../../../data/navLinks';
 import Burgerlinks from '../../../data/BurgerLinks';
+import navlinks from '../../../data/navLinks';
 import ShoppingCartContext from '../../Context/ShoppingCartContext';
 
 // ---------------Cart icon style config ----------------------------
